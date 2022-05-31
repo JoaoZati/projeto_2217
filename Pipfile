@@ -9,6 +9,7 @@ flake8 = "*"
 pandas = "*"
 numpy = "*"
 ipython = "*"
+dask = "*"
 
 [dev-packages]
 
