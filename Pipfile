@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+python-decouple = "*"
+flake8 = "*"
 
 [dev-packages]
 
