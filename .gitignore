@@ -1,0 +1,5 @@
+# env from python decouple
+.env
+
+# Diretorio venv
+.venv/
