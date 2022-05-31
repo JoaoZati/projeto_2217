@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 python-decouple = "*"
 flake8 = "*"
+pandas = "*"
+numpy = "*"
+ipython = "*"
 
 [dev-packages]
 
