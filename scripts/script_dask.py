@@ -1,8 +1,8 @@
-from decouple import config
+from scripts import env_config
 from dask import dataframe as dd
 
 # no arquivo .env insira o camilho para baixar a planilha
-DIR_EXCEL = config("DIR_EXCEL")
+DIR_EXCEL = env_config("DIR_EXCEL")
 
 path_excel_2022_02 = DIR_EXCEL + 'Consumo_horario_2022_02.csv'
 
