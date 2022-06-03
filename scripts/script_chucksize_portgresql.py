@@ -13,7 +13,10 @@ str_engine = 'postgresql://' + \
 
 engine = create_engine(str_engine, echo=False)
 
-chunksize = pd.read_sql('SELECT * FROM consumo_horario_2019', engine, chunksize=1_000_000)
+conn = engine.connect().execution_options(
+        stream_results=True)
+
+chunksize = pd.read_sql('SELECT * FROM consumo_horario_2019', conn, chunksize=1_000_000)
 
 for chunk in chunksize:
     print(chunk.head())

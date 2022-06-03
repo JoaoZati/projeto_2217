@@ -8,18 +8,18 @@ DIR_EXCEL = env_config("DIR_EXCEL")
 DIR_EXCEL_FILTRADO = env_config("DIR_EXCEL_FILTRADO")
 
 planilhas_filtrar = [
-    'Consumo_horario_2019_1.csv',
-    'Consumo_horario_2019_2.csv',
-    'Consumo_horario_2019_3.csv',
-    'Consumo_horario_2019_4.csv',
-    'Consumo_horario_2019_5.csv',
-    'Consumo_horario_2019_6.csv',
-    'Consumo_horario_2019_7.csv',
-    'Consumo_horario_2019_8.csv',
-    'Consumo_horario_2019_9.csv',
-    'Consumo_horario_2019_10.csv',
-    'Consumo_horario_2019_11.csv',
-    'Consumo_horario_2019_12.csv',
+    # 'Consumo_horario_2019_1.csv',
+    # 'Consumo_horario_2019_2.csv',
+    # 'Consumo_horario_2019_3.csv',
+    # 'Consumo_horario_2019_4.csv',
+    # 'Consumo_horario_2019_5.csv',
+    # 'Consumo_horario_2019_6.csv',
+    # 'Consumo_horario_2019_7.csv',
+    # 'Consumo_horario_2019_8.csv',
+    # 'Consumo_horario_2019_9.csv',
+    # 'Consumo_horario_2019_10.csv',
+    # 'Consumo_horario_2019_11.csv',
+    # 'Consumo_horario_2019_12.csv',
 ]
 
 paths_excel = [DIR_EXCEL + name_excel for name_excel in planilhas_filtrar]

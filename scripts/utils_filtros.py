@@ -3,6 +3,7 @@ import time
 
 def filter_chunksize_to_csv(chunksize, path_export):
     for i, chunk in enumerate(chunksize):
+        # Fazer filtros
         index_bool = chunk[
            (chunk['Ramo de Atividade'] == 'COMÉRCIO') |
            (chunk['Ramo de Atividade'] == 'ACR') |
@@ -21,13 +22,28 @@ def filter_chunksize_to_csv(chunksize, path_export):
 
         chunk.drop(columns_drop, inplace=True, axis=1)
 
+        # Otimizar nome do header para não ter erro no portgresql e concertando cnpj_da_carga
+        lst_columns = list(chunk.columns)
+        lst_columns = [
+            word.replace('ó', '').replace('.', '').replace(' - MWh (MED_C c,j)', '_mwh_(med_c_c_j)').replace(' ',
+                                                                                                             '_').lower()
+            for word in lst_columns
+        ]
+
+        chunk.columns = lst_columns
+
+        try:
+            chunk['cnpj_da_carga'] = chunk['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
+        except AttributeError:
+            chunk['cnpj_da_carga'] = chunk['cnpj_da_carga'].replace(',', '.').astype(float).astype(int)
+
         if i == 0:
             df_csv = chunk
             continue
 
         df_csv = df_csv.append(chunk)
 
-    df_csv.to_csv(path_export)
+    df_csv.to_csv(path_export, index=False)
 
 
 def append_csvs_into_database(chucksize, engine):
