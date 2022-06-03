@@ -1,3 +1,6 @@
+import time
+
+
 def filter_chunksize_to_csv(chunksize, path_export):
     for i, chunk in enumerate(chunksize):
         index_bool = chunk[
@@ -29,6 +32,9 @@ def filter_chunksize_to_csv(chunksize, path_export):
 
 def append_csvs_into_database(chucksize, engine):
     for i, df in enumerate(chucksize):
+        print(f'Iniciando apprending linhas {(i+1) * 1_000_000}')
+        start_time = time.time()
+
         df.drop(['Unnamed: 0'], inplace=True, axis=1)
 
         lst_columns = list(df.columns)
@@ -39,5 +45,9 @@ def append_csvs_into_database(chucksize, engine):
 
         df.columns = lst_columns
 
-        print(f'sending chucksize number {i}')
+        print(f'sending chucksize lines {(i+1) * 1_000_000}')
+        df['cnpj_da_carga'] = df['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
         df.to_sql(name='consumo_horario_2019', con=engine, if_exists='append', index=False)
+
+        end_time = time.time()
+        print(f'Finalizado appending de linhas {(i+1) * 1_000_000} com o tempo de {end_time - start_time}')
