@@ -4,11 +4,11 @@ import time
 
 # no arquivo .env insira o camilho para baixar a planilha
 start_file = time.time()
-DIR_EXCEL = env_config("DIR_EXCEL")
+DIR_EXCEL_FILTRADO = env_config("DIR_EXCEL_FILTRADO")
 
-path_excel_2022_02 = DIR_EXCEL + 'Consumo_horario_2022_02.csv'
+path_excel_2022_02 = DIR_EXCEL_FILTRADO + 'Filtrado_Consumo_horario_2019_1.csv'
 
-ch_2022_02 = pd.read_csv(path_excel_2022_02, sep=';', chunksize=1_000_000)
+ch_2022_02 = pd.read_csv(path_excel_2022_02, sep=',', chunksize=1_000_000)
 
 list_capacidade_da_carga = []
 i = 0

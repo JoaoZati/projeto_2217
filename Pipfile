@@ -10,6 +10,8 @@ pandas = "*"
 numpy = "*"
 ipython = "*"
 dask = "*"
+sqlalchemy = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
