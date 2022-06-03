@@ -1,0 +1,9 @@
+# env from python decouple
+.env
+
+# Diretorio venv
+.venv/
+
+# Vs code and Pycharm
+.idea
+.vscode
