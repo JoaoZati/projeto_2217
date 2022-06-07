@@ -1,6 +1,20 @@
 import time
 
 
+def replace_word(word):
+    replaces = {
+        'ã': 'a',
+        'ó': 'o',
+        ' - MWh (MED_C c,j)': '_mwh_(med_c_c_j)',
+        ' ': '_'
+    }
+
+    for key, value in replaces:
+        word.replace(key, value)
+
+    return word.lower()
+
+
 def filter_chunksize_to_csv(chunksize, path_export):
     for i, chunk in enumerate(chunksize):
         # Fazer filtros
@@ -24,11 +38,7 @@ def filter_chunksize_to_csv(chunksize, path_export):
 
         # Otimizar nome do header para não ter erro no portgresql e concertando cnpj_da_carga
         lst_columns = list(chunk.columns)
-        lst_columns = [
-            word.replace('ó', '').replace('.', '').replace(' - MWh (MED_C c,j)', '_mwh_(med_c_c_j)').replace(' ',
-                                                                                                             '_').lower()
-            for word in lst_columns
-        ]
+        lst_columns = [replace_word(word) for word in lst_columns]
 
         chunk.columns = lst_columns
 
@@ -54,15 +64,16 @@ def append_csvs_into_database(chucksize, engine):
         df.drop(['Unnamed: 0'], inplace=True, axis=1)
 
         lst_columns = list(df.columns)
-        lst_columns = [
-            word.replace('ó', '').replace('.', '').replace(' - MWh (MED_C c,j)', '_mwh_(med_c_c_j)').replace(' ', '_').lower()
-            for word in lst_columns
-        ]
+        lst_columns = [replace_word(word) for word in lst_columns]
 
         df.columns = lst_columns
 
         print(f'sending chucksize lines {(i+1) * 1_000_000}')
-        df['cnpj_da_carga'] = df['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
+        try:
+            df['cnpj_da_carga'] = df['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
+        except AttributeError:
+            df['cnpj_da_carga'] = df['cnpj_da_carga'].replace(',', '.').astype(float).astype(int)
+
         df.to_sql(name='consumo_horario_2019', con=engine, if_exists='append', index=False)
 
         end_time = time.time()
