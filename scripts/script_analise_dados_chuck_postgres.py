@@ -77,6 +77,7 @@ def calculete_quantidade_industrial(df_day, day):
 
     return df_result.to_dict()
 
+
 # Connecting to PostgreSQL by providing a sqlachemy engine
 str_engine = 'postgresql://' + \
              env_config('POSTGRESQL_USER') + ':' + \
