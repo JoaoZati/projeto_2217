@@ -78,3 +78,25 @@ def append_csvs_into_database(chucksize, engine):
 
         end_time = time.time()
         print(f'Finalizado appending de linhas {(i+1) * 1_000_000} com o tempo de {end_time - start_time}')
+
+
+def number_of_hours_month(year: int, month: int) -> int:
+    """
+
+    Parameters
+    ----------
+    year: int, numero do ano da data selecionada
+    month: int, numero do mes da data selecinada, ex: janeiro -> 1, fevereiro -> 2...
+
+    Returns
+    -------
+    int, numero de horas naquele mes
+
+    """
+    leap_year = 0
+    if (year % 4 == 0) and not (year % 100 == 0) or (year % 400 == 0):
+        leap_year = 1
+
+    lst_months = [31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    return 24 * lst_months[month - 1]

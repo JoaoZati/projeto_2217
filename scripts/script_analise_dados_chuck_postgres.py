@@ -5,6 +5,8 @@ from datetime import timedelta, date
 import json
 import time
 
+from utils_filtros import number_of_hours_month
+
 
 def date_range(date1, date2):
     """
@@ -24,36 +26,17 @@ def date_range(date1, date2):
     ]
 
 
-def number_of_hours_month(year: int, month: int) -> int:
-    """
-
-    Parameters
-    ----------
-    year: int, numero do ano da data selecionada
-    month: int, numero do mes da data selecinada, ex: janeiro -> 1, fevereiro -> 2...
-
-    Returns
-    -------
-    int, numero de horas naquele mes
-
-    """
-    leap_year = 0
-    if (year % 4 == 0) and not (year % 100 == 0) or (year % 400 == 0):
-        leap_year = 1
-
-    lst_months = [31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    return 24 * lst_months[month - 1]
-
-
 def calcular_quantidade_industrial(df_day, day):
-    df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(',', '.').astype(
-        float
-    )
-    df_day.loc[:, 'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'] = df_day.loc[
-        :,
-        'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'
-    ].str.replace(',', '.').astype(float)
+    try:
+        df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(',', '.').astype(
+            float
+        )
+        df_day.loc[:, 'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'] = df_day.loc[
+            :,
+            'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'
+        ].str.replace(',', '.').astype(float)
+    except AttributeError:
+        pass
 
     df_hour = df_day[df_day['hh'] == 0]
     df_result_count = df_hour.groupby(['ramo_de_atividade']).count()['data']
@@ -93,7 +76,7 @@ conn = engine.connect().execution_options(
     stream_results=True)
 
 time_spend = time.time()
-chunksize = pd.read_sql('SELECT * FROM consumo_horario_2019 ORDER BY data', conn, chunksize=1_000_000)
+chunksize = pd.read_sql('SELECT * FROM consumo_horario_2019 ORDER BY data DESC', conn, chunksize=1_000_000)
 print(f'Tempo para importar o chunksize: {time.time() - time_spend}s')
 print('#'*128)
 
@@ -122,7 +105,9 @@ for i, chunk in enumerate(chunksize):
             df_day = pd.concat([df_last_day, df_day])
         elif i_day == len(date_range(dt_first_day, dt_last_day)) - 1:
             df_last_day = df_day
-            continue
+            if not day.month == 12 and day.day == 31:
+                continue
+            # Ultimo dia do ano ele faz a analise
 
         if df_day.empty:
             dct_results[str_day] = {'empty': True}
@@ -138,8 +123,3 @@ for i, chunk in enumerate(chunksize):
 path_resultados = '/home/joao/Documents/mitsidi/2217/planilhas_analise/resultados/resultado_tabela.json'
 
 open(path_resultados, 'w').write(json.dumps(dct_results))
-
-with open(path_resultados, 'r') as file_json:
-    dct_results_2 = json.loads(file_json.read())
-
-df_open_results = pd.DataFrame.from_dict(dct_results_2['2019-01-02']['dataframe'])
