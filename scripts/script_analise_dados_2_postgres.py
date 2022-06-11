@@ -123,12 +123,8 @@ def chunksize_postgresql(chunksize_sample=1_000_000):
     return chunksize
 
 
-def chunksize_spreedsheet(path_excel, chunksize_sample, separator=','):
-    return pd.read_csv(path_excel, sep=separator, chunksize=chunksize_sample)
-
-
 time_chunk = time.time()
-# chunksize = chunksize_spreedsheet(path_spreedsheet, 1_000_000)
+# chunksize = pd.read_csv(path_excel, sep=',', chunksize=1_000_000)
 chunksize = chunksize_postgresql()
 print(f'O tempo total para fazer o select do consumo filtrado foi: {time.time() - time_chunk}')
 
