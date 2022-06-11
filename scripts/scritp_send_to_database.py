@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import time
 
-from utils_filtros import append_csvs_into_database
+from utils_filtros import append_chunk_into_database
 
 start_program_time = time.time()
 # Connecting to PostgreSQL by providing a sqlachemy engine
@@ -44,7 +44,7 @@ for path_excel in paths_excel:
     # Chucksize and appending
     chucksize = pd.read_csv(path_excel, sep=',', chunksize=1_000_000)
 
-    append_csvs_into_database(chucksize, engine)
+    append_chunk_into_database(chucksize, engine, 'consumo_horario_2019')
 
     print(f'Finalizado a planilha {path_excel}')
     print(f'Total de tempo utilizado de {time.time() - start_time}')

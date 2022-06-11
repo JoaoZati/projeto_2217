@@ -5,12 +5,13 @@ def replace_word(word):
     replaces = {
         'ã': 'a',
         'ó': 'o',
-        ' - MWh (MED_C c,j)': '_mwh_(med_c_c_j)',
-        ' ': '_'
+        ' - MWh (MED_C c,j)': '_mwh',
+        ' ': '_',
+        'Cod.': 'cd'
     }
 
-    for key, value in replaces:
-        word.replace(key, value)
+    for key, value in replaces.items():
+        word = word.replace(key, value)
 
     return word.lower()
 
@@ -56,7 +57,7 @@ def filter_chunksize_to_csv(chunksize, path_export):
     df_csv.to_csv(path_export, index=False)
 
 
-def append_csvs_into_database(chucksize, engine):
+def append_chunk_into_database(chucksize, engine, name_table):
     for i, df in enumerate(chucksize):
         print(f'Iniciando apprending linhas {(i+1) * 1_000_000}')
         start_time = time.time()
@@ -74,7 +75,7 @@ def append_csvs_into_database(chucksize, engine):
         except AttributeError:
             df['cnpj_da_carga'] = df['cnpj_da_carga'].replace(',', '.').astype(float).astype(int)
 
-        df.to_sql(name='consumo_horario_2019', con=engine, if_exists='append', index=False)
+        df.to_sql(name=name_table, con=engine, if_exists='append', index=False)
 
         end_time = time.time()
         print(f'Finalizado appending de linhas {(i+1) * 1_000_000} com o tempo de {end_time - start_time}')
