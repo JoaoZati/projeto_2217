@@ -5,25 +5,7 @@ from datetime import timedelta, date
 import json
 import time
 
-from utils_filtros import number_of_hours_month
-
-
-def date_range(date1, date2):
-    """
-
-    Parameters
-    ----------
-    date1: datetime.date: data inicial do range a ser analisado
-    date2: datatime.date: data final do range a ser analisado
-
-    Returns
-    -------
-    list: lista contendo o range de todas as datas (apenas dias) entre as duas datas fornecidas.
-    """
-
-    return [
-        date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)
-    ]
+from utils_filtros import date_range
 
 
 def calcular_quantidade_industrial(df_day, day):

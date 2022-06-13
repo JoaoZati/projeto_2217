@@ -1,4 +1,5 @@
 import time
+from datetime import timedelta
 
 
 def replace_word(word):
@@ -101,3 +102,21 @@ def number_of_hours_month(year: int, month: int) -> int:
     lst_months = [31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
     return 24 * lst_months[month - 1]
+
+
+def date_range(date1, date2):
+    """
+
+    Parameters
+    ----------
+    date1: datetime.date: data inicial do range a ser analisado
+    date2: datatime.date: data final do range a ser analisado
+
+    Returns
+    -------
+    list: lista contendo o range de todas as datas (apenas dias) entre as duas datas fornecidas.
+    """
+
+    return [
+        date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)
+    ]

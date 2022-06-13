@@ -7,3 +7,6 @@
 # Vs code and Pycharm
 .idea
 .vscode
+
+# Python cache
+scripts/__pycache__
