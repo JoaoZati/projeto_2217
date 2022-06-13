@@ -17,6 +17,52 @@ def replace_word(word):
     return word.lower()
 
 
+def filtrar_dataframe_planilha_baixada(df):
+    df = df.copy()
+
+    index_bool = df[
+        (df['Ramo de Atividade'] == 'COMÉRCIO') |
+        (df['Ramo de Atividade'] == 'ACR') |
+        (df['Ramo de Atividade'] == 'SERVIÇOS')
+    ].index
+
+    df.drop(index_bool, inplace=True)
+
+    columns_drop = [
+        'Cód. Perfil',
+        'Sigla',
+        'Consumo no Ambiente Livre da parcela de carga - MWh (RC_AL c,j)',
+        'Consumo de energia ajustado da parcela cativa da carga parcialmente livre - MWh (RC_CAT c,j)',
+        'Consumo de energia ajustado de uma parcela de carga - MWh (RC c,j)',
+    ]
+
+    df.drop(columns_drop, inplace=True, axis=1)
+
+    lst_columns = list(df.columns)
+    lst_columns = [replace_word(word) for word in lst_columns]
+
+    df.columns = lst_columns
+
+    try:
+        df['cnpj_da_carga'] = df['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
+    except AttributeError:
+        df['cnpj_da_carga'] = df['cnpj_da_carga'].replace(',', '.').astype(float).astype(int)
+
+    # Adicionar consumo e capacidade de carga para float
+    try:
+        df.loc[:, 'capacidade_da_carga_(mw)'] = df.loc[:, 'capacidade_da_carga_(mw)'].str.replace(',', '.').astype(
+            float
+        )
+        df.loc[:, 'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'] = df.loc[
+            :,
+            'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'
+        ].str.replace(',', '.').astype(float)
+    except AttributeError:
+        pass
+
+    return df
+
+
 def filter_chunksize_to_csv(chunksize, path_export):
     for i, chunk in enumerate(chunksize):
         # Fazer filtros
@@ -60,7 +106,7 @@ def filter_chunksize_to_csv(chunksize, path_export):
 
 def append_chunk_into_database(chucksize, engine, name_table):
     for i, df in enumerate(chucksize):
-        print(f'Iniciando apprending linhas {(i+1) * 1_000_000}')
+        print(f'Iniciando appending linhas {(i+1) * 1_000_000}')
         start_time = time.time()
 
         df.drop(['Unnamed: 0'], inplace=True, axis=1)
@@ -70,11 +116,24 @@ def append_chunk_into_database(chucksize, engine, name_table):
 
         df.columns = lst_columns
 
-        print(f'sending chucksize lines {(i+1) * 1_000_000}')
+        print(f'sending chunksize lines {(i+1) * 1_000_000}')
         try:
             df['cnpj_da_carga'] = df['cnpj_da_carga'].str.replace(',', '.').astype(float).astype(int)
         except AttributeError:
             df['cnpj_da_carga'] = df['cnpj_da_carga'].replace(',', '.').astype(float).astype(int)
+
+        df.to_sql(name=name_table, con=engine, if_exists='append', index=False)
+
+        end_time = time.time()
+        print(f'Finalizado appending de linhas {(i+1) * 1_000_000} com o tempo de {end_time - start_time}')
+
+
+def append_chunk_into_database_baixado(chucksize, engine, name_table):
+    for i, chunk in enumerate(chucksize):
+        print(f'Iniciando appending linhas {(i+1) * 1_000_000}')
+        start_time = time.time()
+
+        df = filtrar_dataframe_planilha_baixada(chunk)
 
         df.to_sql(name=name_table, con=engine, if_exists='append', index=False)
 
