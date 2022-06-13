@@ -1,9 +1,7 @@
 from scripts import env_config
 import pandas as pd
-import time
 
 # no arquivo .env insira o camilho para baixar a planilha
-
 DIR_EXCEL_FILTRADO = env_config("DIR_EXCEL_FILTRADO")
 nao_otimizada = True
 
@@ -18,8 +16,8 @@ for chunk in ch_2022_02:
     if nao_otimizada:
         lst_columns = list(chunk.columns)
         lst_columns = [
-            word.replace('ó', '').replace('.', '').replace(' - MWh (MED_C c,j)', '_mwh_(med_c_c_j)').replace(' ',
-                                                                                                             '_').lower()
+            word.replace('ó', '').replace('.', '').replace(
+                ' - MWh (MED_C c,j)', '_mwh_(med_c_c_j)').replace(' ', '_').lower()
             for word in lst_columns
         ]
 

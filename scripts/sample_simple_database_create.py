@@ -21,4 +21,3 @@ df = pd.DataFrame(data={'hello': lst_hello, 'world': lst_world})
 df.to_sql(name='helloworld', con=engine, if_exists='append', index=False)
 
 data = pd.read_sql('SELECT * FROM helloworld', engine)
-

@@ -1,7 +1,7 @@
 from scripts import env_config
 import pandas as pd
 from sqlalchemy import create_engine
-from datetime import timedelta, date
+from datetime import date
 import json
 import time
 
@@ -10,7 +10,9 @@ from utils_filtros import date_range
 
 def calcular_quantidade_industrial(df_day, day):
     try:
-        df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(',', '.').astype(
+        df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(
+            ',', '.'
+        ).astype(
             float
         )
         df_day.loc[:, 'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'] = df_day.loc[

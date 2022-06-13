@@ -1,8 +1,6 @@
 from scripts import env_config
 import pandas as pd
 from sqlalchemy import create_engine
-from datetime import timedelta, date
-import json
 
 str_engine = 'postgresql://' + \
              env_config('POSTGRESQL_USER') + ':' + \

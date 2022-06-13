@@ -2,7 +2,6 @@ from scripts import env_config
 import pandas as pd
 from sqlalchemy import create_engine
 from datetime import date
-import json
 import time
 
 from utils_filtros import date_range
@@ -24,7 +23,9 @@ conn = engine.connect().execution_options(
 
 def calcular_codigo_de_carga(df_day):
     try:
-        df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(',', '.').astype(
+        df_day.loc[:, 'capacidade_da_carga_(mw)'] = df_day.loc[:, 'capacidade_da_carga_(mw)'].str.replace(
+            ',', '.'
+        ).astype(
             float
         )
         df_day.loc[:, 'consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh'] = df_day.loc[
@@ -34,7 +35,9 @@ def calcular_codigo_de_carga(df_day):
     except AttributeError:
         pass
 
-    gb_carga = df_day.groupby(['cd_carga', 'ramo_de_atividade', 'nome_empresarial', 'carga', 'capacidade_da_carga_(mw)'])
+    gb_carga = df_day.groupby(
+        ['cd_carga', 'ramo_de_atividade', 'nome_empresarial', 'carga', 'capacidade_da_carga_(mw)']
+    )
 
     df_carga_count = gb_carga.count()
     df_carga_count.reset_index(inplace=True)
@@ -69,10 +72,12 @@ def calcular_codigo_de_carga(df_day):
     )
 
     df_result['fator_de_carga_horario'] = df_result['consumo_medio_horario_mwh'] / df_result['capacidade_da_carga_(mw)']
-    df_result['var_minimo_medio'] = abs(df_result['consumo_minimo_horario_mwh'] - df_result['consumo_medio_horario_mwh']) / \
-        df_result['consumo_medio_horario_mwh']
-    df_result['var_maximo_medio'] = abs(df_result['consumo_maximo_horario_mwh'] - df_result['consumo_medio_horario_mwh']) / \
-        df_result['consumo_medio_horario_mwh']
+    df_result['var_minimo_medio'] = abs(
+        df_result['consumo_minimo_horario_mwh'] - df_result['consumo_medio_horario_mwh']
+    ) / df_result['consumo_medio_horario_mwh']
+    df_result['var_maximo_medio'] = abs(
+        df_result['consumo_maximo_horario_mwh'] - df_result['consumo_medio_horario_mwh']
+    ) / df_result['consumo_medio_horario_mwh']
 
     df_med = gb_carga.median().reset_index()['consumo_de_energia_no_ponto_de_conexao_da_parcela_de_carga_mwh']
 
