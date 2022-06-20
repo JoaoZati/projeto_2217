@@ -17,6 +17,46 @@ def replace_word(word):
     return word.lower()
 
 
+def number_of_hours_month(year: int, month: int) -> int:
+    """
+
+    Parameters
+    ----------
+    year: int, numero do ano da data selecionada
+    month: int, numero do mes da data selecinada, ex: janeiro -> 1, fevereiro -> 2...
+
+    Returns
+    -------
+    int, numero de horas naquele mes
+
+    """
+    leap_year = 0
+    if (year % 4 == 0) and not (year % 100 == 0) or (year % 400 == 0):
+        leap_year = 1
+
+    lst_months = [31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    return 24 * lst_months[month - 1]
+
+
+def date_range(date1, date2):
+    """
+
+    Parameters
+    ----------
+    date1: datetime.date: data inicial do range a ser analisado
+    date2: datatime.date: data final do range a ser analisado
+
+    Returns
+    -------
+    list: lista contendo o range de todas as datas (apenas dias) entre as duas datas fornecidas.
+    """
+
+    return [
+        date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)
+    ]
+
+
 def filtrar_dataframe_planilha_baixada(df):
     df = df.copy()
 
@@ -141,41 +181,11 @@ def append_chunk_into_database_baixado(chucksize, engine, name_table):
         print(f'Finalizado appending de linhas {(i+1) * 1_000_000} com o tempo de {end_time - start_time}')
 
 
-def number_of_hours_month(year: int, month: int) -> int:
-    """
+def export_chunk_into_csv(chuncksize, path_export):
+    for i, chunk in enumerate(chuncksize):
+        if i == 0:
+            df_csv = chunk
+        else:
+            df_csv = df_csv.append(chunk)
 
-    Parameters
-    ----------
-    year: int, numero do ano da data selecionada
-    month: int, numero do mes da data selecinada, ex: janeiro -> 1, fevereiro -> 2...
-
-    Returns
-    -------
-    int, numero de horas naquele mes
-
-    """
-    leap_year = 0
-    if (year % 4 == 0) and not (year % 100 == 0) or (year % 400 == 0):
-        leap_year = 1
-
-    lst_months = [31, 28 + leap_year, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    return 24 * lst_months[month - 1]
-
-
-def date_range(date1, date2):
-    """
-
-    Parameters
-    ----------
-    date1: datetime.date: data inicial do range a ser analisado
-    date2: datatime.date: data final do range a ser analisado
-
-    Returns
-    -------
-    list: lista contendo o range de todas as datas (apenas dias) entre as duas datas fornecidas.
-    """
-
-    return [
-        date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)
-    ]
+    df_csv.to_csv(path_export, index=False)
